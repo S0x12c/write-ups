@@ -9,8 +9,7 @@ I like to start from running the binary to see how it behaves - we can see that 
 
 I ran the binary in gdb with GEF and disassembled main function.
 ![alt text](img/ARM_stack1_02.png)
-
-From the screenshot above we can see two interesting functions - **errx** and **strcpy**. Errx if probably related to checking if arguments were given. We can confirm this by setting breakpoint on errx function (`b \*0x000104d8`) and running the next instruction (`nexti`).
+From the screenshot above we can see two interesting functions - **errx** and **strcpy**. Errx is probably related to checking if arguments were given. We can confirm this by setting breakpoint on errx function (`b \*0x000104d8`) and running the next instruction (`nexti`).
 ![alt text](img/ARM_stack1_03.png)
 
 The second function is strcpy which has the potential to be vulnerable to buffer overflow.
@@ -23,9 +22,13 @@ After strcpy function we can see that the value from the address r11 with offset
 Right now, the register r3 holds value 0x0 and register r2 0x61626364.
 ![alt text](img/ARM_stack1_05.png)
 
-After running a few more instructions, we get a message "Try again, you got 0x%08x".
+After running a few more instructions, we got a message "Try again, you got 0x%08x".
 
-Therefore we can conclude that we need to put 0x61626364 ("dcba"?) value in the register r3. So we run the binary again with longer argument (`run asdfasdfasdfadsfasdfasdfasdfasdfasdfsdfadsfasdfasdasdfasdfasdfasdfasdfasdfasd`).
+After that, we can conclude that we need to put **0x61626364 ("dcba"?)** value in the register r3. 
+
+### Determining the right value
+
+So we run the binary again with longer argument (`run asdfasdfasdfadsfasdfasdfasdfasdfasdfsdfadsfasdfasdasdfasdfasdfasdfasdfasdfasd`).
 
 After loading value to the r3 we can see that it has a part of our argument - 0x73616664 ("dfas"?).
 
@@ -51,17 +54,22 @@ We copy the address from r3 registry and run the `pattern_tools.pattern_offset('
 
 We got the information that the offset is 64, so now we know, that after 64 characters we override the value in r3 register.
 
+### Overwriting the variable value
+
+#### From the gdb
+
 I created the argument by typing `python -c "print 64 * 'A' + 'dcba'"` and supplied this to gdb (`run AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAdcba`).
 ![alt text](img/ARM_stack1_10.png)
 
 And now we can see that values in r3 and r2 registries are equal. After few `nexti` we get the message "you have correctly got the variable to the right value".
 
+#### From the terminal
 
 Different way to run this binary is to create argument with hex value of **dcba**, that is **0x61626364**. As the binary is in little endian format (we can check endianness by typing `rabin2 -I stack1`), we need to rotate the hex value to get **\x64\x63\x62\x61**.
 
-After we get desired value then we can create our argument with `$ python -c "print 64 * 'A' + r'\x64\x63\x62\x61'"` command.
+Now we can create our argument with `$ python -c "print 64 * 'A' + r'\x64\x63\x62\x61'"` command.
 
-And I piped this argument to the binary with `$ printf "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\x64\x63\x62\x61" | xargs ./stack1`.
+To run the binary, we need to pipe this argument with `$ printf "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\x64\x63\x62\x61" | xargs ./stack1`.
 ![alt text](img/ARM_stack1_11.png)
 
 
