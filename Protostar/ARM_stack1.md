@@ -9,6 +9,7 @@ I like to start from running the binary to see how it behaves - we can see that 
 
 I ran the binary in gdb with GEF and disassembled main function.
 ![alt text](img/ARM_stack1_02.png)
+
 From the screenshot above we can see two interesting functions - **errx** and **strcpy**. Errx is probably related to checking if arguments were given. We can confirm this by setting breakpoint on errx function (`b \*0x000104d8`) and running the next instruction (`nexti`).
 ![alt text](img/ARM_stack1_03.png)
 
@@ -19,7 +20,7 @@ So I removed existing breakpoint (in my case `del 1`) and put new breakpoint on 
 
 We can see that our argument is now in registers r1 and r3. To observe how the binary works I ran `nexti` to step to the next instruction.
 After strcpy function we can see that the value from the address r11 with offset -8 is going to be loaded into register r3 and the value from the pc registry with an offset 48 will be loaded into register r2. The next instruction compares both of these two values.
-Right now, the register r3 holds value 0x0 and register r2 0x61626364.
+Right now, the register r3 holds value **0x0** and register r2 **0x61626364**.
 ![alt text](img/ARM_stack1_05.png)
 
 After running a few more instructions, we got a message "Try again, you got 0x%08x".
@@ -52,7 +53,7 @@ We copy the address from r3 registry and run the `pattern_tools.pattern_offset('
 
 ![alt text](img/ARM_stack1_09.png)
 
-We got the information that the offset is 64, so now we know, that after 64 characters we override the value in r3 register.
+We got the information that the offset is 64, so now we know, that after 64 characters we will override the value in r3 register.
 
 ### Overwriting the variable value
 
@@ -69,9 +70,7 @@ Different way to run this binary is to create argument with hex value of **dcba*
 
 Now we can create our argument with `$ python -c "print 64 * 'A' + r'\x64\x63\x62\x61'"` command.
 
-To run the binary, we need to pipe this argument with `$ printf "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\x64\x63\x62\x61" | xargs ./stack1`.
+We will use the command `$ printf "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\x64\x63\x62\x61" | xargs ./stack1` to pipe this argument into our binary.
 ![alt text](img/ARM_stack1_11.png)
-
-
 
 
