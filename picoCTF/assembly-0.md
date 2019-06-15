@@ -65,6 +65,7 @@ To compile **intro_asm_rev.c** and **intro_asm_rev.S** I removed `.bits 32` line
 
 As my mentor pointed out (*thanks RG!*) the problem was laying with [ABI](https://wiki.osdev.org/System_V_ABI#i386). As I understood, the problem was in the way in which ABI handled the registers in functions, especially the fact that the EBX register should not be changed while a function is executed.
 To improve this code, RG added two instructions - one that pushes EBX value to the stack at the beginning of the asm0 function and one that takes this value back at the end of the function.  
+
 Final content of the **intro_asm_rev.S** file:
 ```asm
 .intel_syntax noprefix
