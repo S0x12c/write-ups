@@ -9,18 +9,18 @@
 ```asm
 .intel_syntax noprefix
 .bits 32
-	
+    
 .global asm0
 
 asm0:
     push ebp
-	mov ebp,esp
-	mov eax,DWORD PTR [ebp+0x8]
-	mov ebx,DWORD PTR [ebp+0xc]
-	mov eax,ebx
-	mov esp,ebp
-	pop ebp	
-	ret
+    mov ebp,esp
+    mov eax,DWORD PTR [ebp+0x8]
+    mov ebx,DWORD PTR [ebp+0xc]
+    mov eax,ebx
+    mov esp,ebp
+    pop ebp 
+    ret
 ```
 
 ### Solution by reading the code
@@ -69,20 +69,20 @@ To improve this code, RG added two instructions - one that pushes EBX value to t
 Final content of the **intro_asm_rev.S** file:
 ```asm
 .intel_syntax noprefix
-	
+    
 .global asm0
 
 asm0:
-	push ebp
-	mov ebp,esp
-	push ebx //RG
-	mov eax,DWORD PTR [ebp+0x8]
-	mov ebx,DWORD PTR [ebp+0xc]
-	mov eax,ebx
-	pop ebx //RG
-	mov esp,ebp
-	pop ebp	
-	ret
+    push ebp
+    mov ebp,esp
+    push ebx //RG
+    mov eax,DWORD PTR [ebp+0x8]
+    mov ebx,DWORD PTR [ebp+0xc]
+    mov eax,ebx
+    pop ebx //RG
+    mov esp,ebp
+    pop ebp 
+    ret
 ```
 
 After making these changes, the binary was compiled with the following command:
