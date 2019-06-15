@@ -4,12 +4,12 @@
 
 asm0:
 	push ebp
-	mov	ebp,esp
+	mov ebp,esp
     push ebx //RG
-	mov	eax,DWORD PTR [ebp+0x8]
-	mov	ebx,DWORD PTR [ebp+0xc]
-	mov	eax,ebx
+	mov eax,DWORD PTR [ebp+0x8]
+	mov ebx,DWORD PTR [ebp+0xc]
+	mov eax,ebx
     pop ebx //RG
-	mov	esp,ebp
-	pop	ebp	
+	mov esp,ebp
+	pop ebp	
 	ret

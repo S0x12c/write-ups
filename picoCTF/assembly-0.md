@@ -13,7 +13,7 @@
 .global asm0
 
 asm0:
-	push ebp
+    push ebp
 	mov ebp,esp
 	mov eax,DWORD PTR [ebp+0x8]
 	mov ebx,DWORD PTR [ebp+0xc]
