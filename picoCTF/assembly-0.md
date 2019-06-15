@@ -14,12 +14,12 @@
 
 asm0:
 	push ebp
-	mov	ebp,esp
-	mov	eax,DWORD PTR [ebp+0x8]
-	mov	ebx,DWORD PTR [ebp+0xc]
-	mov	eax,ebx
-	mov	esp,ebp
-	pop	ebp	
+	mov ebp,esp
+	mov eax,DWORD PTR [ebp+0x8]
+	mov ebx,DWORD PTR [ebp+0xc]
+	mov eax,ebx
+	mov esp,ebp
+	pop ebp	
 	ret
 ```
 
@@ -47,7 +47,7 @@ Because the return value from the function is stored in the EAX register, the an
 *I will be running this 32-bit ELF on 64-bit architecture.*
 
 As I want to learn more about assembly I wanted to run this program and print the return value. I wrote C code to call the asm0 function with provided arguments (**0xc9** and **0xb0**).  
-intro_asm_rev.c:
+**intro_asm_rev.c**:
 ```c
 #include <stdio.h>
 
@@ -65,7 +65,7 @@ To compile **intro_asm_rev.c** and **intro_asm_rev.S** I removed `.bits 32` line
 
 As my mentor pointed out (*thanks RG!*) the problem was laying with [ABI](https://wiki.osdev.org/System_V_ABI#i386). As I understood, the problem was in the way in which ABI handled the registers in functions, especially the fact that the EBX register should not be changed while a function is executed.
 To improve this code, RG added two instructions - one that pushes EBX value to the stack at the beginning of the asm0 function and one that takes this value back at the end of the function.  
-Final content of the intro_asm_rev.S file:
+Final content of the **intro_asm_rev.S** file:
 ```asm
 .intel_syntax noprefix
 	
@@ -74,11 +74,11 @@ Final content of the intro_asm_rev.S file:
 asm0:
 	push ebp
 	mov ebp,esp
-    push ebx //RG
+	push ebx //RG
 	mov eax,DWORD PTR [ebp+0x8]
 	mov ebx,DWORD PTR [ebp+0xc]
 	mov eax,ebx
-    pop ebx //RG
+	pop ebx //RG
 	mov esp,ebp
 	pop ebp	
 	ret
