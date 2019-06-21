@@ -1,8 +1,8 @@
 # Write-ups
 
 ### Content
-1. picoCTF:  
+- picoCTF:  
   1. [Assembly-0](picoCTF/assembly-0.md)
 
-2. Protostar  
+- Protostar  
   1. [ARM Stack0](Protostar/ARM_stack1.md)
